@@ -2,20 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
-
-func renderSelection(initialStartSelector []int, dataHero [][]string) string {
-	hero := ""
-
-	for i := initialStartSelector[0]; i < len(dataHero); i++ {
-		for n := initialStartSelector[1]; n < len(dataHero[i]); n++ {
-			fmt.Println(dataHero[i][n])
-			hero = dataHero[i][n]
-		}
-	}
-
-	return hero
-}
 
 func main() {
 	// Heroes selector
@@ -29,8 +17,7 @@ func main() {
 		{"I", "J", "K", "L"},
 	}
 	initialStartSelector := [2]int{1, 2}
-	userSelection := []string{"up", "up", "down"}
-	finalSelectedRes := ""
+	userSelection := []string{"up", "up", "down", "left", "right"}
 
 	var up, down, left, right int
 	// count user input
@@ -51,10 +38,30 @@ func main() {
 		}
 	}
 
-	// render selection
+	// horizontal move calculation (up and down) when up is decrease when down is increase
+	initialStartSelector[0] = initialStartSelector[0] - up
+	if math.Signbit(float64(initialStartSelector[0])) {
+		initialStartSelector[0] = 0
+	}
 
-	fmt.Println(dataHero)
-	fmt.Println(initialStartSelector)
-	fmt.Println(fmt.Sprintf("up: %d, down: %d, left: %d, right: %d", up, down, left, right))
-	fmt.Println("Selected Hero is : ", finalSelectedRes)
+	initialStartSelector[0] = initialStartSelector[0] + down
+	if initialStartSelector[0] >= len(dataHero)-1 {
+		initialStartSelector[0] = len(dataHero) - 1
+	}
+
+	// vertical move calculation (left and right) when left is decrease when right is increase
+	initialStartSelector[1] = initialStartSelector[1] - left
+	if math.Signbit(float64(initialStartSelector[1])) {
+		initialStartSelector[1] = 0
+	}
+
+	initialStartSelector[1] = initialStartSelector[1] + right
+	if initialStartSelector[1] >= len(dataHero[initialStartSelector[0]]) {
+		initialStartSelector[1] = len(dataHero[initialStartSelector[0]])
+	}
+
+	// render selection
+	// fmt.Println(fmt.Sprintf("up: %d, down: %d, left: %d, right: %d", up, down, left, right))
+	// fmt.Println(initialStartSelector)
+	fmt.Println("Selected Hero is : ", dataHero[initialStartSelector[0]][initialStartSelector[1]])
 }
